@@ -1,3 +1,5 @@
+print("Importing libraries...")
+
 import os as os
 
 import tensorflow as tf
@@ -6,24 +8,19 @@ from sklearn.model_selection import train_test_split
 
 import INF473N_data_extraction as data
 
-#data importing -> mnist to test
-print("Data processing :")
+print("Libraries imported.")
 
-distances, labels = data.load_data()
+#data iprocessing
+print("Data processing...")
+
+input_shape, output_shape, distances, labels = data.load_data()
 print("Dataset loaded")
 
 x_train, x_test, y_train, y_test = train_test_split(
     distances, labels, test_size=0.2, random_state=42)
 print("Data sliced between train and test datasets")
-mnist = tf.keras.datasets.mnist
+print("Data processed.")
 
-(X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-
-Y_train = Y_train[:1000]
-Y_test = Y_test[:1000]
-
-X_train = X_train[:1000].reshape(-1, 28 * 28) / 255.0
-X_test = X_test[:1000].reshape(-1, 28 * 28) / 255.0
 
 # returns a short sequential model
 def create_model():
@@ -34,13 +31,13 @@ def create_model():
     model = tf.keras.models.Sequential([
 
         # hidden layer
-        keras.layers.Dense(units = 512, activation = leakyrelu, input_shape=(784,)),
+        keras.layers.Dense(units = 512, activation = leakyrelu, input_shape=(input_shape,)),
         keras.layers.Dropout(rate=0.2),
         keras.layers.Dense(units = 105, activation = leakyrelu),
         keras.layers.Dropout(rate=0.2),
 
         # final layer
-        keras.layers.Dense(units = 10, activation = tf.nn.softmax),
+        keras.layers.Dense(units = output_shape, activation = tf.nn.softmax),
     ])
 
     model.compile(optimizer=tf.keras.optimizers.Adam(),
@@ -61,18 +58,20 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(
 latest = tf.train.latest_checkpoint(checkpoint_dir)
 
 # create a model instance
+print("Creating the model...")
 model = create_model()
 model.summary()
 
 
-
 if latest: model.load_weights(latest)
+print("Previous state imported.")
 loss, acc = model.evaluate(X_train, Y_train)
 
 
 
 # training
-model.fit(X_train, Y_train, epochs = 3,
+print("Training...")
+model.fit(X_train, Y_train, epochs = 50,
           validation_data = (X_test, Y_test),
           callbacks = [cp_callback]) # save checkpoints at the end of each epoch
 
