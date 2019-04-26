@@ -1,9 +1,20 @@
-import os
+import os as os
 
 import tensorflow as tf
 from tensorflow import keras
+from sklearn.model_selection import train_test_split
+
+import INF473N_data_extraction as data
 
 #data importing -> mnist to test
+print("Data processing :")
+
+distances, labels = data.load_data()
+print("Dataset loaded")
+
+x_train, x_test, y_train, y_test = train_test_split(
+    distances, labels, test_size=0.2, random_state=42)
+print("Data sliced between train and test datasets")
 mnist = tf.keras.datasets.mnist
 
 (X_train, Y_train), (X_test, Y_test) = mnist.load_data()

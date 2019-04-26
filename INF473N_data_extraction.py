@@ -1,8 +1,3 @@
-import csv as csv
-
-distancesList = []
-labelList = []
-
 def convertLabel(sequence): #gives a nb to the aminoacid
     label = sequence[7]
     if label == "ALA": return [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -28,12 +23,19 @@ def convertLabel(sequence): #gives a nb to the aminoacid
     if label == "TYR": return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
     if label == "VAL": return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
-def main():
+def load_data():
+
+    distancesList = []
+    labelList = []
+
     with open('matrix.csv') as f:
-        nbOfLines = int(f.readline())
+
+        nbOfSamples = int(f.readline())
         i = 0
 
-        while i < nbOfLines:
+        f.readline() # length of sequence + nb of features
+
+        while i < nbOfSamples:
             # Extracting labels
             sequence = f.readline()
             labelList.append(convertLabel(sequence))
@@ -41,11 +43,14 @@ def main():
             # Extracting distances
             distancesString = f.readline()
             distancesArray = [float(s) for s in distancesString.split(",")]
-            distanceList.append
-            f.readline()  # empty line
-            i += 3
+            distancesList.append(distancesArray)
 
+            # empty line
+            f.readline()
 
+            i += 1
+
+    return distancesList, labelList
 
 
 
