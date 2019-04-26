@@ -1,4 +1,4 @@
-print("Importing libraries...")
+print("Importing libraries...", end=" ")
 
 import os as os
 
@@ -8,9 +8,10 @@ from sklearn.model_selection import train_test_split
 
 import INF473N_data_extraction as data
 
-print("Libraries imported.")
+print("Done")
+print("")
 
-#data iprocessing
+#data processing
 print("Data processing...")
 
 input_shape, output_shape, distances, labels = data.load_data()
@@ -20,7 +21,7 @@ x_train, x_test, y_train, y_test = train_test_split(
     distances, labels, test_size=0.2, random_state=42)
 print("Data sliced between train and test datasets")
 print("Data processed.")
-
+print("")
 
 # returns a short sequential model
 def create_model():
@@ -31,7 +32,7 @@ def create_model():
     model = tf.keras.models.Sequential([
 
         # hidden layer
-        keras.layers.Dense(units = 512, activation = leakyrelu, input_shape=(input_shape,)),
+        keras.layers.Dense(units = 512, activation = leakyrelu),
         keras.layers.Dropout(rate=0.2),
         keras.layers.Dense(units = 105, activation = leakyrelu),
         keras.layers.Dropout(rate=0.2),
@@ -58,21 +59,21 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(
 latest = tf.train.latest_checkpoint(checkpoint_dir)
 
 # create a model instance
-print("Creating the model...")
+print("Creating the model...", end=" ")
 model = create_model()
-model.summary()
-
+print("Done")
+print(" ")
 
 if latest: model.load_weights(latest)
 print("Previous state imported.")
-loss, acc = model.evaluate(X_train, Y_train)
+loss, acc = model.evaluate(x_train, y_train)
 
 
 
 # training
 print("Training...")
 model.fit(X_train, Y_train, epochs = 50,
-          validation_data = (X_test, Y_test),
+          validation_data = (x_test, y_test),
           callbacks = [cp_callback]) # save checkpoints at the end of each epoch
 
 model.save('my_model.h5')

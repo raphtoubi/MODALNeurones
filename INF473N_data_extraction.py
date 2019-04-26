@@ -33,7 +33,10 @@ def load_data():
         nbOfSamples = int(f.readline())
         i = 0
 
-        f.readline() # length of sequence + nb of features
+        shapes = f.readline() # length of sequence + nb of features
+        output_shape = int(shapes[0])
+        input_shape = int(shapes[1])
+
 
         while i < nbOfSamples:
             # Extracting labels
@@ -50,7 +53,7 @@ def load_data():
 
             i += 1
 
-    return distancesList, labelList
+    return input_shape, output_shape, distancesList, labelList
 
 
 
