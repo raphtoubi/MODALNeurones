@@ -16,14 +16,17 @@ X_test = X_test[:1000].reshape(-1, 28 * 28) / 255.0
 
 # returns a short sequential model
 def create_model():
+    # activation function: leaky ReLU
+    leakyrelu = lambda x: tf.keras.activations.relu(x, alpha=0.01, max_value=None, threshold=0)
+
     # creation du reseau de neurones
     model = tf.keras.models.Sequential([
 
-        # input layer --> same dimension as input
-        keras.layers.Dense(units = 512, activation = tf.nn.relu, input_shape=(784,)),
-
         # hidden layer
-        keras.layers.Dense(units = 105, activation = tf.nn.relu),
+        keras.layers.Dense(units = 512, activation = leakyrelu, input_shape=(784,)),
+        keras.layers.Dropout(rate=0.2),
+        keras.layers.Dense(units = 105, activation = leakyrelu),
+        keras.layers.Dropout(rate=0.2),
 
         # final layer
         keras.layers.Dense(units = 10, activation = tf.nn.softmax),
@@ -36,7 +39,7 @@ def create_model():
     return model
 
 # Create checkppoints
-checkpoint_path = "training_1/cp-{epoch:04d}.ckpt"
+checkpoint_path = "checkpoints/cp-{epoch:04d}.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 cp_callback = tf.keras.callbacks.ModelCheckpoint(
@@ -50,7 +53,9 @@ latest = tf.train.latest_checkpoint(checkpoint_dir)
 model = create_model()
 model.summary()
 
-model.load_weights(latest)
+
+
+if latest: model.load_weights(latest)
 loss, acc = model.evaluate(X_train, Y_train)
 
 
@@ -60,3 +65,4 @@ model.fit(X_train, Y_train, epochs = 3,
           validation_data = (X_test, Y_test),
           callbacks = [cp_callback]) # save checkpoints at the end of each epoch
 
+model.save('my_model.h5')
