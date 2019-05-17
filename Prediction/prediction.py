@@ -17,20 +17,11 @@ def load_data(filename):
         shapes = f.readline()
         input_shape = int(shapes.split(",")[1])
 
-        f.readline()
-
         distances_list = np.zeros((protein_size, input_shape))
 
         for i in range(0, protein_size):
-
             distances = f.readline()
-
             distances_list[i, :] = np.array([float(s) for s in distances.split(",")])
-
-            f.readline()
-            f.readline()
-
-        f.close()
 
         return protein_size, distances_list
 
