@@ -60,11 +60,10 @@ double** read(){
 
 // to be used later
 string convert_label(int number){
-    string* aminoacid_list = new string[22] {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU",
+    const string aminoacid_list[22] =  {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU",
                              "LYS", "MET", "PHE", "PRO", "PYL", "SEL", "SER", "THR", "TRP", "TYR", "VAL"};
     return aminoacid_list[number];
 }
-
 
 int main()
 {
@@ -77,9 +76,24 @@ int main()
     // Write the distances file
     write(distances, protein_size, input_shape);
 
-    // Call the python script
-    string call_python = "python prediction.py";
-    system(call_python.c_str());
+    // Call the script (depending on the platform)
+
+    #if defined( __APPLE__) // Mac OS
+        system("./mac/prediction");
+
+    #elif defined(__WIN32) // Windows
+        system("python prediction.py"); // packaged executable to be done
+
+    #elif defined(__linux__) // Linux
+        system("python prediction.py"); // packaged executable to be done
+
+    #else
+        cerr << "Platform not supported" << endl;
+
+
+    #endif
+
+
     
     // Get back the predicted_protein.csv  
     double** predicted_protein = read();
@@ -89,7 +103,4 @@ int main()
     // Clean memory space
     delete[] distances;
     delete[] predicted_protein;
-
-
-
 }

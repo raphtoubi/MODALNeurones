@@ -1,34 +1,45 @@
-import tensorflow as tf
-import numpy as np
-import os as os
+# FOR PYINSTALLER USE :
+# ON MAC TYPE : pyinstaller --onefile --add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk' --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl' --hidden-import=tensorflow prediction.py
 
+#tensorflow stuff
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Dropout, Flatten, concatenate
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.losses import sparse_categorical_crossentropy
+from tensorflow.keras.activations import relu
+from tensorflow.train import latest_checkpoint
+from tensorflow.nn import softmax
 
-def convert_label(number):
-    aminoacid_list = ["ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU",
-                             "LYS", "MET", "PHE", "PRO", "PYL", "SEL", "SER", "THR", "TRP", "TYR", "VAL"]
-    return aminoacid_list[number];
+#other librairies needed
+from numpy import reshape, zeros, array
+from os import getcwd
+from os.path import dirname, join
 
 
 def load_data(filename):
 
-    with open(filename) as f:
+    filepath = join(getcwd(), filename)
+
+    with open(filepath) as f:
         protein_size = int(f.readline())
 
         shapes = f.readline()
         input_shape = int(shapes.split(",")[1])
 
-        distances_list = np.zeros((protein_size, input_shape))
+        distances_list = zeros((protein_size, input_shape))
 
         for i in range(0, protein_size):
             distances = f.readline()
-            distances_list[i, :] = np.array([float(s) for s in distances.split(",")])
+            distances_list[i, :] = array([float(s) for s in distances.split(",")])
 
         return protein_size, distances_list
 
 
 def write_data(outputs, protein_size):
 
-    with open("predicted_protein.csv", 'w') as f:
+    filepath = join(getcwd(), "predicted_protein.csv")
+
+    with open(filepath, 'w') as f:
 
         f.write(str(protein_size))
         f.write("\n")
@@ -42,39 +53,39 @@ def write_data(outputs, protein_size):
 
 def single_input_model():
     # activation function: leaky ReLU
-    leakyrelu = lambda x: tf.keras.activations.relu(x, alpha=0.01, max_value=None, threshold=0)
+    leakyrelu = lambda x: relu(x, alpha=0.01, max_value=None, threshold=0)
 
-    # creation du reseau de neurones
-    model = tf.keras.models.Sequential([
+    # creation du réseau de neurones
+    model = Sequential([
 
         # hidden layer
-        tf.keras.layers.Dense(units = 105, activation = leakyrelu, input_shape = (105,)),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 210, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 210, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 210, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 100, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 75, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units = 53, activation = leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
+        Dense(units = 105, activation = leakyrelu, input_shape = (105,)),
+        Dropout(rate=0.2),
+        Dense(units = 210, activation = leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units = 210, activation = leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units = 210, activation = leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units = 100, activation = leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units = 75, activation = leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units = 53, activation = leakyrelu),
+        Dropout(rate=0.2),
 
         # final layer
-        tf.keras.layers.Dense(units = 22, activation = tf.nn.softmax),
+        Dense(units = 22, activation = softmax),
     ])
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(),
-                  loss=tf.keras.losses.sparse_categorical_crossentropy,
+    model.compile(optimizer=Adam(),
+                  loss=sparse_categorical_crossentropy,
                   metrics=['accuracy'])
 
     # Restoring
     single_input_checkpoint_path = "models/Single input model/checkpoints/checkpoint.ckpt"
-    single_input_checkpoint_dir = os.path.dirname(single_input_checkpoint_path)
-    single_input_latest = tf.train.latest_checkpoint(single_input_checkpoint_dir)
+    single_input_checkpoint_dir = dirname(single_input_checkpoint_path)
+    single_input_latest = latest_checkpoint(single_input_checkpoint_dir)
     model.load_weights(single_input_latest)
 
     return model
@@ -82,48 +93,48 @@ def single_input_model():
 
 def double_input_model():
     # activation function: leaky ReLU
-    leakyrelu = lambda x: tf.keras.activations.relu(x, alpha=0.01, max_value=None, threshold=0)
+    leakyrelu = lambda x: relu(x, alpha=0.01, max_value=None, threshold=0)
 
     # distances branch
-    distancesBranch = tf.keras.models.Sequential([
-        tf.keras.layers.Dense(units=105, activation=leakyrelu, input_shape=(105,)),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units=210, activation=leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units=210, activation=leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units=100, activation=leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units=75, activation=leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2),
-        tf.keras.layers.Dense(units=50, activation=leakyrelu),
-        tf.keras.layers.Dropout(rate=0.2)
+    distancesBranch = Sequential([
+        Dense(units=105, activation=leakyrelu, input_shape=(105,)),
+        Dropout(rate=0.2),
+        Dense(units=210, activation=leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units=210, activation=leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units=100, activation=leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units=75, activation=leakyrelu),
+        Dropout(rate=0.2),
+        Dense(units=50, activation=leakyrelu),
+        Dropout(rate=0.2)
     ])
 
     # residues branch
-    residuesBranch = tf.keras.models.Sequential([
-        tf.keras.layers.Dense(units=7, activation=leakyrelu, input_shape=(7, 22)),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(units=50, activation=leakyrelu)
+    residuesBranch = Sequential([
+        Dense(units=7, activation=leakyrelu, input_shape=(7, 22)),
+        Flatten(),
+        Dense(units=50, activation=leakyrelu)
 
     ])
 
     # concatenation
-    combinedInput = tf.keras.layers.concatenate([distancesBranch.output, residuesBranch.output])
+    combinedInput = concatenate([distancesBranch.output, residuesBranch.output])
 
-    x = tf.keras.layers.Dense(units=30, activation=leakyrelu, input_shape=(100,))(combinedInput)
-    x = tf.keras.layers.Dense(units=22, activation=tf.nn.softmax)(x)
+    x = Dense(units=30, activation=leakyrelu, input_shape=(100,))(combinedInput)
+    x = Dense(units=22, activation=softmax)(x)
 
-    model = tf.keras.models.Model(inputs=[distancesBranch.input, residuesBranch.input], outputs=x)
+    model = Model(inputs=[distancesBranch.input, residuesBranch.input], outputs=x)
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(),
-                  loss=tf.keras.losses.sparse_categorical_crossentropy,
+    model.compile(optimizer=Adam(),
+                  loss=sparse_categorical_crossentropy,
                   metrics=['accuracy'])
 
     # Restoring
     double_input_checkpoint_path = "models/Double input model/checkpoints/checkpoint.ckpt"
-    double_input_checkpoint_dir = os.path.dirname(double_input_checkpoint_path)
-    double_input_latest = tf.train.latest_checkpoint(double_input_checkpoint_dir)
+    double_input_checkpoint_dir = dirname(double_input_checkpoint_path)
+    double_input_latest = latest_checkpoint(double_input_checkpoint_dir)
     model.load_weights(double_input_latest)
 
     return model
@@ -134,7 +145,7 @@ protein_size = int(input_data[0])
 inputs = input_data[1]
 
 # outputs : matrix of residues probabilities
-outputs = np.zeros((protein_size, 22))
+outputs = zeros((protein_size, 22))
 
 single_input_model = single_input_model()
 double_input_model = double_input_model()
@@ -143,13 +154,13 @@ double_input_model = double_input_model()
 
 # predict the 7 first residues using the single input model
 for i in range(0, 7):
-    input = np.reshape(inputs[i, :], (105, 1)).T
+    input = reshape(inputs[i, :], (105, 1)).T
     outputs[i, :] = single_input_model.predict(input)
 
 # predict the following residues using the double input model
 for i in range(7, protein_size):
-    input = np.reshape(inputs[i, :], (105, 1)).T
-    residues_input = np.reshape(outputs[i-7:i, :], (1, 7, 22))
+    input = reshape(inputs[i, :], (105, 1)).T
+    residues_input = reshape(outputs[i-7:i, :], (1, 7, 22))
 
     outputs[i, :] = double_input_model.predict([input,  residues_input])
 
