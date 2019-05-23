@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ using namespace std;
  * For now on, it is written in a distances_file_test.csv,
  * the distances_file.csv is a real distances file used for testin (15 first aminoacids of matrix.csv).
  *
- * The program calls a python script which encapsulates the neural network, the problem is that you nedd to have
+ * The program calls a python script which encapsulates the neural network, the problem is that you need to have
  * TF on your python installation, it would be great to find a way to get rid of this problem (maybe making an executable ?)*/
 
 void write(double** distances, int protein_size, int input_shape){
@@ -51,11 +52,7 @@ double** read(){
         file.close();
         return prediction;
     }
-
-    else {
-        cerr << "ERROR: File predicted_protein.csv does not exist !!" << endl;
-        return nullptr;
-    }
+    cerr << "ERROR: File predicted_protein.csv does not exist !!" << endl;
 }
 
 // to be used later
