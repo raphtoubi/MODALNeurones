@@ -3,6 +3,8 @@
 #include <string>
 #include <cstdlib>
 
+#include "sequence.hpp" /* sequence */
+
 using namespace std;
 
 /* This program must be formatted in a SAMSON Element.
@@ -53,14 +55,9 @@ double** read(){
         return prediction;
     }
     cerr << "ERROR: File predicted_protein.csv does not exist !!" << endl;
+    return nullptr;
 }
 
-// to be used later
-string convert_label(int number){
-    const string aminoacid_list[22] =  {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU",
-                             "LYS", "MET", "PHE", "PRO", "PYL", "SEL", "SER", "THR", "TRP", "TYR", "VAL"};
-    return aminoacid_list[number];
-}
 
 int main()
 {
@@ -95,9 +92,22 @@ int main()
     // Get back the predicted_protein.csv  
     double** predicted_protein = read();
 
+    // Transform it into an array of strings
+    Sequence seq(predicted_protein, protein_size);
+    string** probabilities = seq.getSequence();
+
+    for(int i=0; i<protein_size; i++){
+        cout << i << endl;
+        for(int j=0; j<22; j++){
+            cout << probabilities[i][j] << endl;
+        }
+        cout << " " << endl;
+    }
+
     /* Do some stuff */
 
     // Clean memory space
     delete[] distances;
     delete[] predicted_protein;
+    delete[] probabilities;
 }
