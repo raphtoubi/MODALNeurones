@@ -82,13 +82,13 @@ int main()
         system("./mac/prediction");
 
     #elif defined(__WIN32) // Windows
-        system("python prediction.py"); // packaged executable to be done
+        system("start win/prediction.exe");
 
     #elif defined(__linux__) // Linux
-        system("./linux/prediction"); // packaged executable to be done
+        system("./linux/prediction");
 
     #else
-        cerr << "Platform not supported" << endl;
+        cerr << "ERROR : Platform not supported" << endl;
 
 
     #endif
