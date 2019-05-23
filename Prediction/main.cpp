@@ -85,7 +85,7 @@ int main()
         system("python prediction.py"); // packaged executable to be done
 
     #elif defined(__linux__) // Linux
-        system("python prediction.py"); // packaged executable to be done
+        system("./linux/prediction"); // packaged executable to be done
 
     #else
         cerr << "Platform not supported" << endl;
