@@ -23,8 +23,9 @@ The folder Prediction containes :
 
     - prediction.py which permits to analyse a matrix of distances obtained from the drawing of a protein on Samson. This file recreates the neural network architecture and stores the weights of each neuron in it to predict the primary structure of the protein
     
-    - main.cpp which is a C++ files that calls a python script which encapsulates the neural network
-      You need to have TensorFlow on your computer to make it work (https://www.tensorflow.org/install/pip)
+    - main.cpp which is a C++ files that calls a script which encapsulates script the neural network. It uses sequence.cpp and sequence.hpp
+    
+    - the folders linux, mac and win that that contains the executable, opened  by main.cpp, conresponding to the OS
       
     - the folder Models that contains the weights of each neuron
     
