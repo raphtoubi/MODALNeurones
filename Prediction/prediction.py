@@ -61,19 +61,13 @@ def single_input_model():
 
         # hidden layer
         Dense(units = 105, activation = leakyrelu, input_shape = (105,)),
+        Dense(units = 210, activation = leakyrelu),
+        Dense(units = 400, activation = leakyrelu),
         Dropout(rate=0.2),
         Dense(units = 210, activation = leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units = 210, activation = leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units = 210, activation = leakyrelu),
-        Dropout(rate=0.2),
         Dense(units = 100, activation = leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units = 75, activation = leakyrelu),
-        Dropout(rate=0.2),
+        Dense(units=75, activation=leakyrelu),
         Dense(units = 53, activation = leakyrelu),
-        Dropout(rate=0.2),
 
         # final layer
         Dense(units = 22, activation = softmax),
@@ -99,17 +93,13 @@ def double_input_model():
     # distances branch
     distancesBranch = Sequential([
         Dense(units=105, activation=leakyrelu, input_shape=(105,)),
+        Dense(units=210, activation=leakyrelu),
+        Dense(units=420, activation=leakyrelu),
         Dropout(rate=0.2),
         Dense(units=210, activation=leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units=210, activation=leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units=100, activation=leakyrelu),
-        Dropout(rate=0.2),
-        Dense(units=75, activation=leakyrelu),
-        Dropout(rate=0.2),
+        Dense(units=105, activation=leakyrelu),
+        Dropout(rate=0.07),
         Dense(units=50, activation=leakyrelu),
-        Dropout(rate=0.2)
     ])
 
     # residues branch
