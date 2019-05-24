@@ -31,32 +31,26 @@ string** Sequence::getSequence(){
 
 string Sequence::writeAAProb(double prob, int aaNumber){
 
-    double percentage = round(prob*10000) / 10000;
+    double percentage = round(prob*10000)/100;
 
-    string probString = aminoacid_list[aaNumber];
-    probString.append(" ");
-    probString.append(to_string(percentage));
-
-    return probString;
+    return aminoacid_list[aaNumber] + " " + to_string(percentage) + "%";
 }
 
 string* Sequence::sortAA(string* arrayToSort, double* weights){
 
-    for (int i = 1; i <22; i++) {
+    for (int i=1; i<22; i++) {
 
         double weightsElem = weights[i];
         string arrayToSortElem = arrayToSort[i];
 
-        int j=i;
+        int j = i;
         while(j>0 && weights[j-1] < weightsElem){
             weights[j] = weights[j-1];
             arrayToSort[j] = arrayToSort[j-1];
-
-            weights[j] = weightsElem;
-            arrayToSort[j] = arrayToSortElem;
-
             j--;
         }
+        weights[j] = weightsElem;
+        arrayToSort[j] = arrayToSortElem;
     }
 
     return arrayToSort;
