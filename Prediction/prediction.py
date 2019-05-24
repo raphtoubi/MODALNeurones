@@ -15,10 +15,11 @@ from numpy import reshape, zeros, array
 from os import getcwd
 from os.path import dirname, join
 
+path = "../resource/prediction"
 
 def load_data(filename):
 
-    filepath = join(getcwd(), filename)
+    filepath = join(path, filename)
 
     with open(filepath) as f:
         protein_size = int(f.readline())
@@ -37,7 +38,7 @@ def load_data(filename):
 
 def write_data(outputs, protein_size):
 
-    filepath = join(getcwd(), "predicted_protein.csv")
+    filepath = join(path, "predicted_protein.csv")
 
     with open(filepath, 'w') as f:
 
@@ -83,7 +84,7 @@ def single_input_model():
                   metrics=['accuracy'])
 
     # Restoring
-    single_input_checkpoint_path = "models/Single input model/checkpoints/checkpoint.ckpt"
+    single_input_checkpoint_path = join(path, "models/Single input model/checkpoints/checkpoint.ckpt")
     single_input_checkpoint_dir = dirname(single_input_checkpoint_path)
     single_input_latest = latest_checkpoint(single_input_checkpoint_dir)
     model.load_weights(single_input_latest)
@@ -132,7 +133,7 @@ def double_input_model():
                   metrics=['accuracy'])
 
     # Restoring
-    double_input_checkpoint_path = "models/Double input model/checkpoints/checkpoint.ckpt"
+    double_input_checkpoint_path = join(path, "models/Double input model/checkpoints/checkpoint.ckpt")
     double_input_checkpoint_dir = dirname(double_input_checkpoint_path)
     double_input_latest = latest_checkpoint(double_input_checkpoint_dir)
     model.load_weights(double_input_latest)

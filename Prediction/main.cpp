@@ -19,7 +19,7 @@ using namespace std;
  * TF on your python installation, it would be great to find a way to get rid of this problem (maybe making an executable ?)*/
 
 void write(double** distances, int protein_size, int input_shape){
-    ofstream file("distances_file_test.csv", ios::out | ios::trunc);  // /!\ Replace with "distances_file.csv !!
+    ofstream file("../resource/prediction/distances_file.csv", ios::out | ios::trunc);
             if(file){
                 file << protein_size << endl;
                 file << 15 << "," << input_shape << endl; // size of one sequence, input shape
@@ -35,7 +35,7 @@ void write(double** distances, int protein_size, int input_shape){
 
 
 double** read(){
-    ifstream file("predicted_protein.csv", ios::in);  // on ouvre le fichier en lecture
+    ifstream file("../resource/prediction/predicted_protein.csv", ios::in);  // on ouvre le fichier en lecture
      
     if(file){
         int protein_size;
@@ -73,20 +73,18 @@ int main()
     // Call the script (depending on the platform)
 
     #if defined( __APPLE__) // Mac OS
-        system("./mac/prediction");
+        system("./../resource/prediction/mac/prediction");
 
     #elif defined(__WIN32) // Windows
-        system("start win/prediction.exe");
+        system("start ../resource/prediction/win/prediction.exe");
 
     #elif defined(__linux__) // Linux
-        system("./linux/prediction");
+        system("./../resource/prediction/linux/prediction");
 
     #else
         cerr << "ERROR : Platform not supported" << endl;
 
-
     #endif
-
 
     
     // Get back the predicted_protein.csv  
